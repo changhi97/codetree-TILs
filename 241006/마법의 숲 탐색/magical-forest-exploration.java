@@ -43,7 +43,7 @@ public class Main {
         } else if (canGo(x, y + 1) && canGo(x + 1, y + 1)) {
             down(x, y + 1, (dir + 1) % 4, id);
         } else {
-            if (x < 3) {
+            if (x < 4) {
                 resetBoard();
             } else {
                 board[x][y] = id;
@@ -107,7 +107,7 @@ public class Main {
     }
 
     public static boolean canGo(int x, int y) {
-        if (x < 0 || y < 0 || x >= R || y >= C) return false;
+        if (x < 0 || y < 0 || x >= R || y >= C||board[x][y]!=0) return false;
         for (int i = 0; i < 4; i++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
@@ -119,6 +119,13 @@ public class Main {
     public static void print() {
         for (int i = 0; i < R; i++) {
             System.out.println(Arrays.toString(board[i]));
+        }
+        System.out.println();
+    }
+
+    public static void printDoor() {
+        for (int i = 0; i < R; i++) {
+            System.out.println(Arrays.toString(door[i]));
         }
         System.out.println();
     }
