@@ -62,7 +62,7 @@ public class Main {
             for (int j = 1; j < 4; j++) {
 
                 for (int r = 0; r < 3; r++) {
-                    rotateRight(i, j);
+                    rotateRight(j, i);
 
                     boolean[][] v = new boolean[N][N];
                     int count = 0;
@@ -71,28 +71,36 @@ public class Main {
                         for (int y = 0; y < N; y++) {
                             if (!v[x][y]) {
                                 int result = bfs(v, x, y);
-
-
-//                                if(i==2 && j==2){
-//                                    System.out.println(i+" "+j+" "+" "+r+" "+result);
-//                                    print();
-//
-//                                }
                                 count+=result;
                             }
                         }
                     }
 
 
-                    if (max < count || (max==count && maxRotate>r+1)) {
-                        max = count;
-                        maxNode = new Node(i, j);
+//                    if(max>count) continue;
+//                    if (max < count
+//                            || (max != 0 && max==count && maxRotate>r+1)
+//                            || maxNode==null
+//                            || (maxNode.y>j || ( maxNode.y==j && maxNode.x>i))) {
+//                        max = count;
+//
+//
+//                        maxNode = new Node(i, j);
+//                        maxRotate = r+1;
+//                    }
+
+                    if(max<count){
+                        max=count;
+                        maxNode = new Node(j,i);
                         maxRotate = r+1;
+                    }else if(max==count && maxRotate>r+1){
+                        maxNode=new Node(j,i);
+                        maxRotate=r+1;
                     }
                 }
 
                 for (int r = 0; r < 3; r++) {
-                    rotateLeft(i, j);
+                    rotateLeft(j, i);
                 }
             }
         }
@@ -110,9 +118,8 @@ public class Main {
             boolean[][] v= new boolean[N][N];
             for(int i =0; i<N; i++){
                 for(int j =0; j<N; j++){
-                    if(!v[i][j] && bfs(v,i,j) > 0){
+                    if(!v[i][j] && bfs(v,i,j) > 0 && board[i][j]!=0){
                         int result  = select(i,j);
-//                        System.out.println(result);
 
                         countSum+=result;
 
@@ -125,7 +132,9 @@ public class Main {
 
             if(countSum==0) break;
             round[id]+=countSum;
-
+//            System.out.println("M" +" "+mPoint);
+//            System.out.println();
+//            print();
             fillBoard();
 //            print();
         }
@@ -176,6 +185,7 @@ public class Main {
 
     public static int bfs(boolean[][] v, int x, int y) {
         Queue<Node> q = new LinkedList<>();
+
         q.offer(new Node(x, y));
         v[x][y] = true;
         int count = 1;
@@ -232,8 +242,8 @@ public class Main {
 
     }
 
-    // (1) 열 번호가 작은 순으로 조각이 생겨납니다.
-    // 만약 열 번호가 같다면 (2) 행 번호가 큰 순으로 조각이 생겨납니다.
+//    // (1) 열 번호가 작은 순으로 조각이 생겨납니다.
+//    // 만약 열 번호가 같다면 (2) 행 번호가 큰 순으로 조각이 생겨납니다.
     public static void fillBoard() {
         for (int i = 0; i < N; i++) {
             for (int j = N - 1; j >= 0; j--) {
@@ -244,6 +254,8 @@ public class Main {
             }
         }
     }
+
+
 
     public static void print() {
         for (int i = 0; i < N; i++) {
