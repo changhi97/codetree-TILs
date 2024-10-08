@@ -108,12 +108,13 @@ public class Main {
             }
 
             for (int i = 0; i < N; i++) {
-                if (v[i]) continue;
+                if (v[i] ||  k[i] <= 0) continue;
 
-                if (nr[i] + h[i] - 1 < r[i] || nr[i] > r[i] + h[i] - 1 || r[i] + h[i] - 1 < nr[i] || nr[i] + h[i] - 1 < r[i])
+                if (nr[x] + h[x] - 1 < r[i] || nr[x] > r[i] + h[i] - 1 || r[i] + h[i] - 1 < nr[x] || nr[x] + h[x] - 1 < r[i])
                     continue;
-                if (c[i] > nc[i] + w[i] - 1 || c[i] + w[i] - 1 < nc[i] || nc[i] > c[i] + w[i] - 1 || nc[i] + w[i] - 1 < c[i])
+                if (c[i] > nc[x] + w[x] - 1 || c[i] + w[i] - 1 < nc[x] || nc[x] > c[i] + w[i] - 1 || nc[x] + w[x] - 1 < c[i])
                     continue;
+
 
                 v[i] = true;
                 q.offer(i);
