@@ -98,7 +98,7 @@ public class Main {
             nr[x] += dx[dir];
             nc[x] += dy[dir];
 
-            if (nr[x] < 0 || nc[x] < 0 || nr[x] >= L || nc[x] >= L) return false;
+            if (nr[x] < 0 || nc[x] < 0 || nr[x]+h[x]-1 >= L || nc[x]+w[x]-1 >= L) return false;
 
             for (int i = nr[x]; i < nr[x] + h[x]; i++) {
                 for (int j = nc[x]; j < nc[x] + w[x]; j++) {
