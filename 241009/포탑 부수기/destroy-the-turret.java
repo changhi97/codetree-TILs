@@ -52,12 +52,15 @@ public class Main {
 //            }else{
 //                shootBomb(b[0],b[1],board[a[0]][a[1]]);
 //            }
+//            System.out.println("shooter"+" "+a[0]+" "+a[1]);
             List<Node> route = dijkstra(a[0], a[1], b[0], b[1]);
             if(!route.isEmpty()){
                 for(Node node : route){
+//                    System.out.print("["+node.x+" "+node.y+"] ");
                     if(node.x==b[0] && node.y==b[1]) board[node.x][node.y] -= board[a[0]][a[1]];
                     else board[node.x][node.y] -= (board[a[0]][a[1]]/2);
                 }
+//                System.out.println();
             }else{
                 shootBomb(b[0],b[1],board[a[0]][a[1]]);
             }
@@ -92,7 +95,7 @@ public class Main {
         int[] result = {-1, -1};
         for (int j = M - 1; j >= 0; j--) {
             for (int i = N - 1; i >= 0; i--) {
-                if (board[i][j] == 0) continue;
+                if (board[i][j] <= 0) continue;
                 if (exp > board[i][j]) {
                     exp = board[i][j];
                     recent = attackRound[i][j];
