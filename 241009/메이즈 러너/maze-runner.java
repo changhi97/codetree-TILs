@@ -56,13 +56,14 @@ public class Main {
 
             int x = 0, y = 0;
             int size = 0;
-            for (int j = 0; j < N; j++) {
+            for (int j = 1; j < N+1; j++) {
                 int[] point = findRect(j);
                 size = j;
                 x = point[0];
                 y = point[1];
                 if (point[0] != -1 && point[1] != -1) break;
             }
+            if(x==-1 && y==-1) continue;
             rotate(x, y, size);
 
         }
@@ -154,9 +155,8 @@ public class Main {
     }
 
     public static int[] findRect(int size) {
-        for (int i = 0; i < N - size; i++) {
-            for (int j = 0; j < N - size; j++) {
-
+        for (int i = 0; i <= N - size; i++) {
+            for (int j = 0; j <= N - size; j++) {
                 boolean isDoor = false, isPlayer = false;
                 for (int x = i; x < i + size; x++) {
                     for (int y = j; y < j + size; y++) {
