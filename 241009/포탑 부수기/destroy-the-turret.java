@@ -15,7 +15,12 @@ public class Main {
     static int[][] board;
 
     public static void main(String[] args) throws IOException {
-
+//        String input = "4 4 1\n" +
+//                "0 1 4 4\n" +
+//                "8 0 10 13\n" +
+//                "8 0 11 26\n" +
+//                "0 0 0 0\n";
+//        InputStream is = new ByteArrayInputStream(input.getBytes());
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
@@ -28,21 +33,22 @@ public class Main {
         board = new int[N][M];
         attackRound = new int[N][M];
 
+
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < M; j++) {
                 board[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-        for(int i =0; i<K; i++){
+        for (int i = 0; i < K; i++) {
 //            System.out.println("======");
 //            print();
-            int[][] copy= new int[N][M];
-            for(int x =0; x<N; x++) copy[x] = board[x].clone();
+            int[][] copy = new int[N][M];
+            for (int x = 0; x < N; x++) copy[x] = board[x].clone();
 
             int[] a = shooter(i);
-            int[] b= targeting();
-            board[a[0]][a[1]]+=N+M;
+            int[] b = targeting();
+            board[a[0]][a[1]] += N + M;
 
             //좌표가 -1일수가 있나
 //            boolean[][] v= new boolean[N][M];
@@ -52,33 +58,39 @@ public class Main {
 //            }else{
 //                shootBomb(b[0],b[1],board[a[0]][a[1]]);
 //            }
-//            System.out.println("shooter"+" "+a[0]+" "+a[1]);
+//            System.out.println("shooter" + " " + a[0] + " " + a[1] + "  |  " + "target" + " " + board[b[0]][b[1]]);
             List<Node> route = dijkstra(a[0], a[1], b[0], b[1]);
-            if(!route.isEmpty()){
-                for(Node node : route){
-//                    System.out.print("["+node.x+" "+node.y+"] ");
-                    if(node.x==b[0] && node.y==b[1]) board[node.x][node.y] -= board[a[0]][a[1]];
-                    else board[node.x][node.y] -= (board[a[0]][a[1]]/2);
+            if (!route.isEmpty()) {
+                for (int x =1 ;x<route.size(); x++) {
+                    Node node = route.get(x);
+//                    System.out.print("[" + node.x + " " + node.y + "] ");
+                    board[node.x][node.y] -= (board[a[0]][a[1]] / 2);
                 }
+                board[b[0]][b[1]] -= board[a[0]][a[1]];
 //                System.out.println();
-            }else{
-                shootBomb(b[0],b[1],board[a[0]][a[1]]);
+            } else {
+                shootBomb(b[0], b[1], board[a[0]][a[1]]);
             }
 
 
-            for(int x =0; x<N; x++){
-                for(int y =0; y<M; y++){
-                    if((x==a[0] && y==a[1]) || board[x][y]<=0 || board[x][y] != copy[x][y]) continue;
-                    board[x][y] +=1;
+            int count = 0;
+            for (int x = 0; x < N; x++) {
+                for (int y = 0; y < M; y++) {
+                    if ((x == a[0] && y == a[1]) || board[x][y] <= 0 || board[x][y] != copy[x][y]) continue;
+                    board[x][y] += 1;
+                    count++;
                 }
             }
+
+            if(count < 2) break;
+
 //            print();
         }
 
-        int answer= 0;
-        for(int i =0; i<N; i++){
-            for(int j=0; j<M; j++){
-                answer=Math.max(answer,board[i][j]);
+        int answer = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                answer = Math.max(answer, board[i][j]);
             }
         }
         System.out.println(answer);
@@ -108,7 +120,7 @@ public class Main {
                 }
             }
         }
-        attackRound[result[0]][result[1]] = k+1;
+        attackRound[result[0]][result[1]] = k + 1;
         return result;
     }
 
@@ -136,7 +148,6 @@ public class Main {
     }
 
 
-
     public static void shootBomb(int x, int y, int exp) {
         board[x][y] -= exp;
         for (int i = 0; i < 8; i++) {
@@ -156,19 +167,17 @@ public class Main {
     }
 
     public static List<Node> dijkstra(int x1, int y1, int x2, int y2) {
-        Stack<Node> route = new Stack<>();
         PriorityQueue<Node> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.cost, o2.cost));
+        Node[][] routes = new Node[N][M];
+        routes[x1][y1] = new Node(0, 0);
         int[][] dist = new int[N][N];
         for (int i = 0; i < N; i++) Arrays.fill(dist[i], Integer.MAX_VALUE);
         dist[x1][y1] = 0;
         q.offer(new Node(x1, y1, 0));
-        route.push(new Node(x1, y1, 0));
 
         while (!q.isEmpty()) {
             Node node = q.poll();
 
-            if (route.peek().cost < node.cost) route.push(node);
-            if (node.x == x2 && node.y == y2) break;
 
             for (int i = 0; i < 4; i++) {
                 int nx = node.x + dxL[i];
@@ -180,17 +189,30 @@ public class Main {
                 else if (ny >= M) ny = 0;
 
                 if (board[nx][ny] > 0 && dist[nx][ny] > dist[node.x][node.y] + 1) {
+                    routes[nx][ny] = new Node(node.x, node.y);
                     dist[nx][ny] = dist[node.x][node.y] + 1;
-                    Node newNode = new Node(nx, ny, dist[nx][ny]);
-                    q.offer(newNode);
+                    q.offer(new Node(nx, ny, dist[nx][ny]));
                 }
             }
 
         }
 
-        List<Node> list = new ArrayList<>();
-        while (route.size() > 1) list.add(route.pop());
-        return list;
+        Stack<Node> stack = new Stack();
+        List<Node> result = new ArrayList<>();
+        while (true) {
+            Node node = routes[x2][y2];
+            if(node==null) return result;
+            if (node.x == 0 && node.y == 0) break;
+            stack.push(node);
+            x2 = node.x;
+            y2 = node.y;
+        }
+
+        while (!stack.isEmpty()) {
+            Node node = stack.pop();
+            result.add(node);
+        }
+        return result;
     }
 
     static class Node {
