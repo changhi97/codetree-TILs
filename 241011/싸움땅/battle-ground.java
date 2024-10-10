@@ -57,23 +57,19 @@ public class Main {
             players[i + 1] = new Player(i + 1, x, y, s, d, 0);
         }
 
-        for(int i =0; i<K; i++){
+        for (int i = 0; i < K; i++) {
             sol();
         }
 
         StringBuilder answer = new StringBuilder();
-        for(int i =1; i<M+1; i++) answer.append(scores[i]).append(" ");
+        for (int i = 1; i < M + 1; i++) answer.append(scores[i]).append(" ");
 
         System.out.println(answer);
     }
-    public static void print(){
-        for(int i =0; i<N; i++) System.out.println(Arrays.toString(loc[i]));
-        System.out.println();
-    }
+
     public static void sol() {
 
-        for (int i = 1; i < M+1; i++) {
-//            print();
+        for (int i = 1; i < M + 1; i++) {
             int x = players[i].x;
             int y = players[i].y;
             move(i);
@@ -96,56 +92,38 @@ public class Main {
 
                 boolean isWin = (p1 > p2 || (p1 == p2 && players[i].exp > players[idx].exp)) ? true : false;
 
-                int score =  Math.abs((players[i].exp+players[i].gun) - (players[idx].exp+players[idx].gun));
-//                System.out.println("now"+" "+i);
-//                System.out.println("fight " +i+" "+idx);
+                int score = Math.abs((players[i].exp + players[i].gun) - (players[idx].exp + players[idx].gun));
+
                 if (isWin) {
-//                    System.out.println("win"+" "+i+" lose"+" "+idx);
-
-                    //i 가 이겼으면 idx가 무기를 내려놓고 이동한다
-                    board[nx][ny].weapon.offer(players[idx].gun);
-                    players[idx].gun = 0;
-
-                    loseMove(idx);
-
-                    loc[nx][ny] = i;
-
-                    //i가 이겼으면 해당 칸에서 무기를 선택한다
-                    board[nx][ny].weapon.offer(players[i].gun);
-                    players[i].gun = board[nx][ny].weapon.poll();
-
-                    scores[i] +=score;
-
+                    afterFight(i, idx, nx, ny, score);
 
                 } else {
-//                    System.out.println("win"+" "+idx+" lose"+" "+i);
-                    //idx 가 이겼으면 i가 무기를 내려놓고 이동한다
-                    board[nx][ny].weapon.offer(players[i].gun);
-                    players[i].gun = 0;
-
-                    loseMove(i);
-
-                    loc[nx][ny] = idx;
-
-                    //idx가 이겼으면 해당 칸에서 무기를 선택한다
-                    board[nx][ny].weapon.offer(players[idx].gun);
-                    players[idx].gun = board[nx][ny].weapon.poll();
-
-                    scores[idx]+=score;
+                    afterFight(idx, i, nx, ny, score);
                 }
-
-
             }
-
-
         }
+    }
+
+    public static void afterFight(int winIdx, int loseIdx, int x, int y, int score) {
+        board[x][y].weapon.offer(players[loseIdx].gun);
+        players[loseIdx].gun = 0;
+
+        loseMove(loseIdx);
+
+        //i가 이겼으면 해당 칸에서 무기를 선택한다
+        board[x][y].weapon.offer(players[winIdx].gun);
+        players[winIdx].gun = board[x][y].weapon.poll();
+
+        scores[winIdx] += score;
+
+
     }
 
     public static void loseMove(int id) {
         Player p = players[id];
 
-        int x= p.x;
-        int y= p.y;
+        int x = p.x;
+        int y = p.y;
 
         int dir = p.dir;
         int nx = p.x + dx[dir];
@@ -157,24 +135,21 @@ public class Main {
                 nx = p.x + dx[(dir + i) % 4];
                 ny = p.y + dy[(dir + i) % 4];
                 if (nx < 0 || ny < 0 || nx >= N || ny >= N || loc[nx][ny] > 0) continue;
-                dir = (dir+i)%4;
+                dir = (dir + i) % 4;
                 break;
             }
         }
 
-        players[id].x=nx;
-        players[id].y=ny;
-        players[id].dir=dir;
+        players[id].x = nx;
+        players[id].y = ny;
+        players[id].dir = dir;
 
-        if(!board[nx][ny].weapon.isEmpty()){
+        if (!board[nx][ny].weapon.isEmpty()) {
             players[id].gun = board[nx][ny].weapon.poll();
         }
 
-
-        loc[x][y]= 0;
+        loc[x][y] = 0;
         loc[nx][ny] = players[id].id;
-
-
     }
 
     public static void move(int id) {
