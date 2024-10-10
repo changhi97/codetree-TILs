@@ -84,10 +84,10 @@ public class Main {
             loc[x][y] = 0;
             if (loc[nx][ny] == 0) {
                 loc[nx][ny] = players[i].id;
-                if (!board[nx][ny].weapon.isEmpty() && players[i].gun < board[nx][ny].weapon.peek()) {
-                    int temp = players[i].gun;
+                if (!board[nx][ny].weapon.isEmpty()) {
+                    board[nx][ny].weapon.offer(players[i].gun);
                     players[i].gun = board[nx][ny].weapon.poll();
-                    board[nx][ny].weapon.offer(temp);
+
                 }
             } else {
                 int idx = loc[nx][ny];
@@ -105,6 +105,7 @@ public class Main {
                     //i 가 이겼으면 idx가 무기를 내려놓고 이동한다
                     board[nx][ny].weapon.offer(players[idx].gun);
                     players[idx].gun = 0;
+
                     loseMove(idx);
 
                     loc[nx][ny] = i;
@@ -156,7 +157,7 @@ public class Main {
                 nx = p.x + dx[(dir + i) % 4];
                 ny = p.y + dy[(dir + i) % 4];
                 if (nx < 0 || ny < 0 || nx >= N || ny >= N || loc[nx][ny] > 0) continue;
-                dir = (dir+1)%4;
+                dir = (dir+i)%4;
                 break;
             }
         }
