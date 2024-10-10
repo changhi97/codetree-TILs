@@ -1,4 +1,4 @@
-//BOJ_16235_나무 재테크
+//SWEA_코드트리빵
 
 import java.io.*;
 import java.util.*;
@@ -30,17 +30,6 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
-//        String input = "5 3\n" +
-//                "0 0 0 0 0\n" +
-//                "1 0 0 0 1\n" +
-//                "0 0 0 0 0\n" +
-//                "0 1 0 0 0\n" +
-//                "0 0 0 0 1\n" +
-//                "2 3\n" +
-//                "4 4\n" +
-//                "5 1\n";
-//        InputStream is = new ByteArrayInputStream(input.getBytes());
-//        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
 
@@ -64,9 +53,6 @@ public class Main {
             }
         }
 
-
-        //베이스캠프를 지나갈때는 안해야한다.
-
         int id = 1;
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
@@ -76,77 +62,42 @@ public class Main {
             stores[i + 1] = new Node(x, y);
         }
 
-//        print();
-//        printStore();
-
-
-//        print();
         int t = 0;
         int count = 0;
         while (true) {
             t++;
-//            System.out.println(Arrays.toString(isActive));
-//            System.out.println("time" +" "+t);
-            if (t <= M) {
-                for (int i = 1; i <= M; i++) {
-                    if (!isActive[i]) continue;
 
-                    //사람을 이동시킨다. 만약 상점에 도달했으면 더이상 움직이 않아도 된다.
-                    moveStore(i);
-                    if (peoples[i].x == stores[i].x && peoples[i].y == stores[i].y) {
-                        isActive[i] = false;
-                        count++;
-                        if (count == M) break;
-                    }
+            for (int i = 1; i <= M; i++) {
+                if (!isActive[i]) continue;
 
+                //사람을 이동시킨다. 만약 상점에 도달했으면 더이상 움직이 않아도 된다.
+                moveStore(i);
+                if (peoples[i].x == stores[i].x && peoples[i].y == stores[i].y) {
+                    isActive[i] = false;
+                    count++;
+                    if (count == M) break;
                 }
-                updateCanGo();
 
+            }
+            updateCanGo();
+
+
+            if (t <= M) {
                 peoples[t] = goBasecamp(t);
                 baseCampBoard[peoples[t].x][peoples[t].y] = t;
-//                System.out.println();
-//                System.out.println("people start"+" "+t+" "+peoples[t].x+" "+peoples[t].y);
-//                printBase();
                 isActive[t] = true;
-            } else {
-                for (int i = 1; i <= M; i++) {
-                    if (!isActive[i]) continue;
-//                    System.out.println("people start"+" "+i+" "+peoples[i].x+" "+peoples[i].y);
-                    //사람을 이동시킨다. 만약 상점에 도달했으면 더이상 움직이 않아도 된다.
-                    moveStore(i);
-                    if (peoples[i].x == stores[i].x && peoples[i].y == stores[i].y) {
-                        isActive[i] = false;
-                        count++;
-                        if (count == M) break;
-
-                    }
-
-                }
+                updateCanGo();
             }
 
-            updateCanGo();
             if (count == M) break;
 
-//            printBase();
-//            printStore();
-//            printV();
-//            print();
-
-//            System.out.println();
-//            System.out.println();
         }
         System.out.println(t);
     }
 
     public static void moveStore(int id) {
-//        System.out.println("moveStore" + " " + id);
         Node people = peoples[id];
         Node store = stores[id];
-
-        //현재 사람이 최소 거리, 최소 루트로 이동해야한다.
-        //canGo로 갈수 있는지 없는지 체크해야한다.
-
-        //생각 1. 다익스트라로 구한다.->시간초과
 
         Queue<Node> q = new LinkedList<>();
         int[][] dist = new int[N][N];
@@ -162,8 +113,6 @@ public class Main {
 
         while (!q.isEmpty()) {
             Node node = q.poll();
-            //현재 위치에서 작아지는 쪽으로 가면 return
-//            if (node.x == people.x && node.y == people.y) break;
 
             for (int i = 0; i < 4; i++) {
                 int nx = node.x + dx[i];
@@ -179,17 +128,10 @@ public class Main {
             }
         }
 
-//        for (int i = 0; i < N; i++) System.out.println(Arrays.toString(dist[i]));
-//        System.out.println();
-//        System.out.println("people " + peoples[id].x + " " + peoples[id].y);
-//        System.out.println("store " + stores[id].x + " " + stores[id].y);
         int nx = routeX[people.x][people.y];
         int ny = routeY[people.x][people.y];
-//        System.out.println(id + " [" + nx + " " + ny + "]");
         peoples[id].x = nx;
         peoples[id].y = ny;
-
-
     }
 
     public static Node goBasecamp(int id) {
@@ -243,40 +185,6 @@ public class Main {
                 canGo[node.x][node.y] = true;
             }
         }
-    }
-
-    public static void print() {
-        for (int i = 0; i < N; i++) System.out.println(Arrays.toString(board[i]));
-        System.out.println();
-        System.out.println();
-    }
-
-    public static void printStore() {
-        for (int i = 0; i < N; i++) System.out.println(Arrays.toString(storeBoard[i]));
-        System.out.println();
-        System.out.println();
-    }
-
-
-    public static void printBase() {
-        for (int i = 0; i < N; i++) System.out.println(Arrays.toString(baseCampBoard[i]));
-        System.out.println();
-        System.out.println();
-    }
-
-    public static void printV() {
-        for(int i =0; i<N; i++){
-            for(int  j= 0; j<N; j++){
-                if(canGo[i][j]){
-                    System.out.print("1 ");
-                }else{
-                    System.out.print("0 ");
-                }
-            }
-            System.out.println();
-        }
-        System.out.println();
-        System.out.println();
     }
 
     static class Node {
