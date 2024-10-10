@@ -38,7 +38,7 @@ public class Main {
 //                "0 0 0 0 1\n" +
 //                "2 3\n" +
 //                "4 4\n" +
-//                "5 1";
+//                "5 1\n";
 //        InputStream is = new ByteArrayInputStream(input.getBytes());
 //        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -85,6 +85,7 @@ public class Main {
         int count = 0;
         while (true) {
             t++;
+//            System.out.println(Arrays.toString(isActive));
 //            System.out.println("time" +" "+t);
             if (t <= M) {
                 for (int i = 1; i <= M; i++) {
@@ -95,23 +96,27 @@ public class Main {
                     if (peoples[i].x == stores[i].x && peoples[i].y == stores[i].y) {
                         isActive[i] = false;
                         count++;
+                        if (count == M) break;
                     }
 
                 }
+                updateCanGo();
                 peoples[t] = goBasecamp(t);
                 baseCampBoard[peoples[t].x][peoples[t].y] = t;
 //                System.out.println();
-//                System.out.println("people start"+" "+peoples[t].x+" "+peoples[t].y);
+//                System.out.println("people start"+" "+t+" "+peoples[t].x+" "+peoples[t].y);
 //                printBase();
                 isActive[t] = true;
             } else {
                 for (int i = 1; i <= M; i++) {
                     if (!isActive[i]) continue;
+//                    System.out.println("people start"+" "+i+" "+peoples[i].x+" "+peoples[i].y);
                     //사람을 이동시킨다. 만약 상점에 도달했으면 더이상 움직이 않아도 된다.
                     moveStore(i);
                     if (peoples[i].x == stores[i].x && peoples[i].y == stores[i].y) {
                         isActive[i] = false;
                         count++;
+                        if (count == M) break;
 
                     }
 
@@ -120,6 +125,11 @@ public class Main {
 
             updateCanGo();
             if (count == M) break;
+
+//            printBase();
+//            printStore();
+//            printV();
+//            print();
 
 //            System.out.println();
 //            System.out.println();
@@ -146,10 +156,11 @@ public class Main {
         for (int i = 0; i < N; i++) Arrays.fill(dist[i], Integer.MAX_VALUE);
         q.offer(new Node(store.x, store.y));
         dist[store.x][store.y] = 0;
+        boolean[][] v= new boolean[N][N];
+        v[store.x][store.y]= true;
 
         while (!q.isEmpty()) {
             Node node = q.poll();
-
             //현재 위치에서 작아지는 쪽으로 가면 return
 //            if (node.x == people.x && node.y == people.y) break;
 
@@ -163,8 +174,6 @@ public class Main {
                     routeY[nx][ny] = node.y;
                     dist[nx][ny] = dist[node.x][node.y] + 1;
                     q.offer(new Node(nx, ny));
-
-
                 }
             }
         }
@@ -178,6 +187,7 @@ public class Main {
 //        System.out.println(id + " [" + nx + " " + ny + "]");
         peoples[id].x = nx;
         peoples[id].y = ny;
+
 
     }
 
@@ -237,6 +247,21 @@ public class Main {
 
     public static void printBase() {
         for (int i = 0; i < N; i++) System.out.println(Arrays.toString(baseCampBoard[i]));
+        System.out.println();
+        System.out.println();
+    }
+
+    public static void printV() {
+        for(int i =0; i<N; i++){
+            for(int  j= 0; j<N; j++){
+                if(canGo[i][j]){
+                    System.out.print("1 ");
+                }else{
+                    System.out.print("0 ");
+                }
+            }
+            System.out.println();
+        }
         System.out.println();
         System.out.println();
     }
