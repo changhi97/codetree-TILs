@@ -125,7 +125,7 @@ public class Main {
 
                     loseMove(i);
 
-                    loc[nx][ny] = idx;
+                 
 
                     //idx가 이겼으면 해당 칸에서 무기를 선택한다
                     board[nx][ny].weapon.offer(players[idx].gun);
