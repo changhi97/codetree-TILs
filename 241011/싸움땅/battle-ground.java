@@ -153,8 +153,8 @@ public class Main {
 
         if (nx < 0 || ny < 0 || nx >= N || ny >= N || loc[nx][ny] > 0) {
             for (int i = 0; i < 4; i++) {
-                nx = p.x + dx[(dir + 1) % 4];
-                ny = p.y + dy[(dir + 1) % 4];
+                nx = p.x + dx[(dir + i) % 4];
+                ny = p.y + dy[(dir + i) % 4];
                 if (nx < 0 || ny < 0 || nx >= N || ny >= N || loc[nx][ny] > 0) continue;
                 dir = (dir+1)%4;
                 break;
