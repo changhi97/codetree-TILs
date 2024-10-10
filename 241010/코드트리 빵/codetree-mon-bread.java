@@ -12,6 +12,9 @@ public class Main {
     //가게의 정보를 표시
     static int[][] storeBoard;
 
+    //유저가 어떤 베이스캠프를 선점했는지
+    static int[][] baseCampBoard;
+
     //사람이 베이스캠프나 상점에 도달했을대 그 지역은 더이상 가지 못한다.
     static boolean[][] canGo;
     static int[] dx = {-1, 0, 0, 1}, dy = {0, -1, 1, 0};
@@ -35,7 +38,7 @@ public class Main {
 //                "0 0 0 0 1\n" +
 //                "2 3\n" +
 //                "4 4\n" +
-//                "5 1\n";
+//                "5 1";
 //        InputStream is = new ByteArrayInputStream(input.getBytes());
 //        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -48,6 +51,7 @@ public class Main {
         board = new int[N][N];
         canGo = new boolean[N][N];
         storeBoard = new int[N][N];
+        baseCampBoard = new int[N][N];
 
         peoples = new Node[M + 1];
         stores = new Node[M + 1];
@@ -60,6 +64,9 @@ public class Main {
             }
         }
 
+
+        //베이스캠프를 지나갈때는 안해야한다.
+
         int id = 1;
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
@@ -68,6 +75,9 @@ public class Main {
             storeBoard[x][y] = id++;
             stores[i + 1] = new Node(x, y);
         }
+
+//        print();
+//        printStore();
 
 
 //        print();
@@ -81,52 +91,27 @@ public class Main {
                     if (!isActive[i]) continue;
 
                     //사람을 이동시킨다. 만약 상점에 도달했으면 더이상 움직이 않아도 된다.
-                    if(peoples[i].route.isEmpty()) moveStore(i);
-
-                    Node node = peoples[i].route.peek();
-
-                    if (canGo[node.x][node.y]) {
-                        moveStore(i);
-                    }
-
-                    node = peoples[i].route.peek();
-
-                    if (node.x == stores[i].x && node.y == stores[i].y) {
+                    moveStore(i);
+                    if (peoples[i].x == stores[i].x && peoples[i].y == stores[i].y) {
                         isActive[i] = false;
                         count++;
-                    } else {
-                        peoples[i].route.poll();
-                        peoples[i].x = node.x;
-                        peoples[i].y = node.y;
-
                     }
-
 
                 }
                 peoples[t] = goBasecamp(t);
+                baseCampBoard[peoples[t].x][peoples[t].y] = t;
 //                System.out.println();
 //                System.out.println("people start"+" "+peoples[t].x+" "+peoples[t].y);
+//                printBase();
                 isActive[t] = true;
             } else {
                 for (int i = 1; i <= M; i++) {
                     if (!isActive[i]) continue;
                     //사람을 이동시킨다. 만약 상점에 도달했으면 더이상 움직이 않아도 된다.
-                    if(peoples[i].route.isEmpty()) moveStore(i);
-                    Node node = peoples[i].route.peek();
-
-                    if (canGo[node.x][node.y]) {
-                        moveStore(i);
-                    }
-
-                    node = peoples[i].route.peek();
-
-                    if (node.x == stores[i].x && node.y == stores[i].y) {
+                    moveStore(i);
+                    if (peoples[i].x == stores[i].x && peoples[i].y == stores[i].y) {
                         isActive[i] = false;
                         count++;
-                    } else {
-                        peoples[i].route.poll();
-                        peoples[i].x = node.x;
-                        peoples[i].y = node.y;
 
                     }
 
@@ -143,7 +128,7 @@ public class Main {
     }
 
     public static void moveStore(int id) {
-//        System.out.println("moveStore");
+//        System.out.println("moveStore" + " " + id);
         Node people = peoples[id];
         Node store = stores[id];
 
@@ -156,24 +141,24 @@ public class Main {
         int[][] dist = new int[N][N];
         int[][] routeX = new int[N][N];
         int[][] routeY = new int[N][N];
-        routeX[people.x][people.y]=-1;
-        routeY[people.x][people.y]=-1;
+
+
         for (int i = 0; i < N; i++) Arrays.fill(dist[i], Integer.MAX_VALUE);
-        q.offer(new Node(people.x, people.y));
-        dist[people.x][people.y] = 0;
+        q.offer(new Node(store.x, store.y));
+        dist[store.x][store.y] = 0;
 
         while (!q.isEmpty()) {
             Node node = q.poll();
 
             //현재 위치에서 작아지는 쪽으로 가면 return
-            if (node.x == store.x && node.y == store.y) break;
+//            if (node.x == people.x && node.y == people.y) break;
 
             for (int i = 0; i < 4; i++) {
                 int nx = node.x + dx[i];
                 int ny = node.y + dy[i];
                 if (nx < 0 || ny < 0 || nx >= N || ny >= N) continue;
 
-                if (!canGo[nx][ny] && dist[nx][ny] > dist[node.x][node.y] + 1) {
+                if ((!canGo[nx][ny] || (nx == people.x && ny == people.y)) && dist[nx][ny] > dist[node.x][node.y] + 1) {
                     routeX[nx][ny] = node.x;
                     routeY[nx][ny] = node.y;
                     dist[nx][ny] = dist[node.x][node.y] + 1;
@@ -184,54 +169,22 @@ public class Main {
             }
         }
 
-        Stack<Node> route = new Stack<>();
-        route.push(new Node(store.x, store.y));
-        int x = store.x, y = store.y;
-        while (true) {
-//            System.out.println(x+" "+y);
-            if (routeX[x][y] == -1 && routeY[x][y] == -1) break;
-            Node node = new Node(routeX[x][y], routeY[x][y]);
-            route.push(node);
-            int nx = routeX[x][y];
-            int ny = routeY[x][y];
-            x=nx;
-            y=ny;
-        }
-
-//        System.out.println("id" +" "+id);
-        if (route.size() > 1) {
-//            System.out.print("["+route.peek().x+" "+route.peek().y+"] ");
-            route.pop();
-        }
-        peoples[id] = route.peek();
-        while (!route.isEmpty()) {
-
-            Node node = route.pop();
-//            System.out.print("["+node.x+" "+node.y+"] ");
-            peoples[id].route.offer(node);
-
-        }
-//        System.out.println(people.x+" "+ people.y);
-//        System.out.println(peoples[id].x+" "+ peoples[id].y);
-//        people = route.pop();
-//        if (peoples[id].x == store.x && peoples[id].y == store.y) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-
-
-    }
-
-    public static int calDist(int x1, int y1, int x2, int y2) {
-        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+//        for (int i = 0; i < N; i++) System.out.println(Arrays.toString(dist[i]));
+//        System.out.println();
+//        System.out.println("people " + peoples[id].x + " " + peoples[id].y);
+//        System.out.println("store " + stores[id].x + " " + stores[id].y);
+        int nx = routeX[people.x][people.y];
+        int ny = routeY[people.x][people.y];
+//        System.out.println(id + " [" + nx + " " + ny + "]");
+        peoples[id].x = nx;
+        peoples[id].y = ny;
 
     }
 
     public static Node goBasecamp(int id) {
         Node store = stores[id];
         Queue<Node> q = new LinkedList<>();
-        q.offer(new Node(store.x, store.y, 0));
+        q.offer(new Node(store.x, store.y));
         boolean[][] v = new boolean[N][N];
         v[store.x][store.y] = true;
         while (!q.isEmpty()) {
@@ -248,7 +201,7 @@ public class Main {
 
                 if (!v[nx][ny] && !canGo[nx][ny]) {
                     v[nx][ny] = true;
-                    q.offer(new Node(nx, ny, node.cost + 1));
+                    q.offer(new Node(nx, ny));
                 }
             }
         }
@@ -258,10 +211,12 @@ public class Main {
     }
 
     public static void updateCanGo() {
-        for (Node node : peoples) {
+        for (int i = 1; i < M + 1; i++) {
+            Node node = peoples[i];
             if (node == null) continue;
             //canGo는 어떤 사람이 베이스캠프나 상점에 도달했을때 true로 변경하며 그 지역은 더이상 지나가지 못한다.
-            if (board[node.x][node.y] == 1 || storeBoard[node.x][node.y] > 0) {
+            //아 근데 도착한거랑 지나가는거를 따로 구별해야한다
+            if (baseCampBoard[node.x][node.y] == i || storeBoard[node.x][node.y] == i) {
                 canGo[node.x][node.y] = true;
             }
         }
@@ -273,19 +228,25 @@ public class Main {
         System.out.println();
     }
 
+    public static void printStore() {
+        for (int i = 0; i < N; i++) System.out.println(Arrays.toString(storeBoard[i]));
+        System.out.println();
+        System.out.println();
+    }
+
+
+    public static void printBase() {
+        for (int i = 0; i < N; i++) System.out.println(Arrays.toString(baseCampBoard[i]));
+        System.out.println();
+        System.out.println();
+    }
+
     static class Node {
-        int x, y, cost;
-        Queue<Node> route = new LinkedList<>();
+        int x, y;
 
         public Node(int x, int y) {
             this.x = x;
             this.y = y;
-        }
-
-        public Node(int x, int y, int cost) {
-            this.x = x;
-            this.y = y;
-            this.cost = cost;
         }
     }
 }
