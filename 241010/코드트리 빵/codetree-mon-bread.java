@@ -101,6 +101,7 @@ public class Main {
 
                 }
                 updateCanGo();
+
                 peoples[t] = goBasecamp(t);
                 baseCampBoard[peoples[t].x][peoples[t].y] = t;
 //                System.out.println();
@@ -193,17 +194,18 @@ public class Main {
 
     public static Node goBasecamp(int id) {
         Node store = stores[id];
+        int[][] dist=new int[N][N];
+        for(int i=0; i<N; i++)Arrays.fill(dist[i] ,Integer.MAX_VALUE);
         Queue<Node> q = new LinkedList<>();
-        q.offer(new Node(store.x, store.y));
+        q.offer(new Node(store.x, store.y,0));
         boolean[][] v = new boolean[N][N];
         v[store.x][store.y] = true;
+        dist[store.x][store.y] = 0;
         while (!q.isEmpty()) {
             Node node = q.poll();
-
+            dist[node.x][node.y] = Math.min(dist[node.x][node.y], node.cost);
             //행, 열 순으로 작은걸 먼저 선택해야한다. 델타로 우선순위를 두었으니 여기서는 체크하지 않아도 된다.
-            if (board[node.x][node.y] == 1) {
-                return node;
-            }
+
             for (int i = 0; i < 4; i++) {
                 int nx = node.x + dx[i];
                 int ny = node.y + dy[i];
@@ -211,13 +213,24 @@ public class Main {
 
                 if (!v[nx][ny] && !canGo[nx][ny]) {
                     v[nx][ny] = true;
-                    q.offer(new Node(nx, ny));
+                    q.offer(new Node(nx, ny, node.cost+1));
+                }
+            }
+        }
+
+        Node node = new Node(N,N,Integer.MAX_VALUE);
+        for(int i =0; i<N; i++){
+            for(int j =0; j<N; j++){
+                if(board[i][j]==1&&dist[i][j]<node.cost){
+                    node.x=i;
+                    node.y=j;
+                    node.cost=dist[i][j];
                 }
             }
         }
 
         //가지 못하는 경우는 없다 했으니 null 반환
-        return null;
+        return node;
     }
 
     public static void updateCanGo() {
@@ -267,11 +280,17 @@ public class Main {
     }
 
     static class Node {
-        int x, y;
+        int x, y,cost;
 
         public Node(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+
+        public Node(int x, int y, int cost) {
+            this.x = x;
+            this.y = y;
+            this.cost = cost;
         }
     }
 }
