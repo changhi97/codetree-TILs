@@ -82,11 +82,8 @@ public class Main {
 
                     //사람을 이동시킨다. 만약 상점에 도달했으면 더이상 움직이 않아도 된다.
                     if(peoples[i].route.isEmpty()) moveStore(i);
+
                     Node node = peoples[i].route.peek();
-//                    if (moveStore(i)) {
-//                        isActive[i] = false;
-//                        count++;
-//                    }
 
                     if (canGo[node.x][node.y]) {
                         moveStore(i);
@@ -107,6 +104,7 @@ public class Main {
 
                 }
                 peoples[t] = goBasecamp(t);
+//                System.out.println();
 //                System.out.println("people start"+" "+peoples[t].x+" "+peoples[t].y);
                 isActive[t] = true;
             } else {
@@ -115,10 +113,6 @@ public class Main {
                     //사람을 이동시킨다. 만약 상점에 도달했으면 더이상 움직이 않아도 된다.
                     if(peoples[i].route.isEmpty()) moveStore(i);
                     Node node = peoples[i].route.peek();
-//                    if (moveStore(i)) {
-//                        isActive[i] = false;
-//                        count++;
-//                    }
 
                     if (canGo[node.x][node.y]) {
                         moveStore(i);
@@ -149,6 +143,7 @@ public class Main {
     }
 
     public static void moveStore(int id) {
+//        System.out.println("moveStore");
         Node people = peoples[id];
         Node store = stores[id];
 
@@ -161,8 +156,10 @@ public class Main {
         int[][] dist = new int[N][N];
         int[][] routeX = new int[N][N];
         int[][] routeY = new int[N][N];
+        routeX[people.x][people.y]=-1;
+        routeY[people.x][people.y]=-1;
         for (int i = 0; i < N; i++) Arrays.fill(dist[i], Integer.MAX_VALUE);
-        q.offer(people);
+        q.offer(new Node(people.x, people.y));
         dist[people.x][people.y] = 0;
 
         while (!q.isEmpty()) {
@@ -191,11 +188,14 @@ public class Main {
         route.push(new Node(store.x, store.y));
         int x = store.x, y = store.y;
         while (true) {
-            if (routeX[x][y] == 0 && routeY[x][y] == 0) break;
+//            System.out.println(x+" "+y);
+            if (routeX[x][y] == -1 && routeY[x][y] == -1) break;
             Node node = new Node(routeX[x][y], routeY[x][y]);
             route.push(node);
-            x = routeX[x][y];
-            y = routeY[x][y];
+            int nx = routeX[x][y];
+            int ny = routeY[x][y];
+            x=nx;
+            y=ny;
         }
 
 //        System.out.println("id" +" "+id);
@@ -205,9 +205,10 @@ public class Main {
         }
         peoples[id] = route.peek();
         while (!route.isEmpty()) {
-            peoples[id].route.offer(route.pop());
-//            Node node = route.pop();
+
+            Node node = route.pop();
 //            System.out.print("["+node.x+" "+node.y+"] ");
+            peoples[id].route.offer(node);
 
         }
 //        System.out.println(people.x+" "+ people.y);
