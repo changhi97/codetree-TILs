@@ -18,6 +18,54 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
+//        String input = "5 24 20 82\n" +
+//                "4 5 2\n" +
+//                "2 1 1\n" +
+//                "1 4 2\n" +
+//                "2 5 1\n" +
+//                "1 1 1\n" +
+//                "1 3 1\n" +
+//                "5 3 1\n" +
+//                "3 1 2\n" +
+//                "3 5 2\n" +
+//                "4 4 2\n" +
+//                "4 3 2\n" +
+//                "2 2 2\n" +
+//                "3 2 2\n" +
+//                "1 2 2\n" +
+//                "1 5 1\n" +
+//                "5 1 1\n" +
+//                "4 1 2\n" +
+//                "2 3 2\n" +
+//                "2 4 1\n" +
+//                "5 4 1\n" +
+//                "5 2 2\n" +
+//                "4 2 2\n" +
+//                "3 4 1\n" +
+//                "5 5 1\n" +
+//                "3 2\n" +
+//                "3 5\n" +
+//                "2 2\n" +
+//                "4 2\n" +
+//                "3 3\n" +
+//                "5 4\n" +
+//                "3 4\n" +
+//                "5 5\n" +
+//                "2 4\n" +
+//                "2 3\n" +
+//                "1 1\n" +
+//                "2 5\n" +
+//                "5 1\n" +
+//                "1 2\n" +
+//                "5 3\n" +
+//                "4 4\n" +
+//                "2 1\n" +
+//                "4 5\n" +
+//                "1 4\n" +
+//                "4 3";
+//
+//        InputStream is = new ByteArrayInputStream(input.getBytes());
+//        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
 
@@ -48,6 +96,7 @@ public class Main {
             int x = Integer.parseInt(st.nextToken()) - 1;
             int y = Integer.parseInt(st.nextToken()) - 1;
             int d = Integer.parseInt(st.nextToken());
+            if(d==2) d=0;
             rms.add(new Player(x, y, d));
             count[x][y] += 1;
         }
@@ -66,11 +115,16 @@ public class Main {
         int now = route.size() / 2;
 
         int answer = 0;
+//        printTree();
+//        printRun();
         for (int i = 0; i < K; i++) {
+//            System.out.println(i+"===============");
             run();
-            now = (now + 1) % route.size();
-            answer += moveHero(now) * (i + 1);
+//            printRun();
+            now = (now+1)%route.size();
+            answer+= moveHero(now)*(i+1);
 
+//            printRun();
         }
         System.out.println(answer);
 
@@ -82,7 +136,7 @@ public class Main {
         hero.y = next.y;
         hero.dir = next.dir;
 
-        return watch(hero.x, hero.y, hero.dir);
+        return watch(hero.x,hero.y,hero.dir);
 
 
     }
@@ -92,7 +146,7 @@ public class Main {
         int ny = y;
         int result = 0;
         for (int i = 0; i < 3; i++) {
-            if (nx >= 0 && ny >= 0 && nx < N && ny < N && !trees[nx][ny] && count[nx][ny] > 0) {
+            if (nx >= 0 && ny >= 0 && nx < N && ny < N && !trees[nx][ny] && count[nx][ny]>0) {
                 result += count[nx][ny];
                 count[nx][ny] = 0;
             }
@@ -155,10 +209,23 @@ public class Main {
 
     }
 
-    public static void printRun() {
-        for (int i = 0; i < N; i++) System.out.println(Arrays.toString(count[i]));
+    public static void printRun(){
+        for(int i =0; i<N; i++) System.out.println(Arrays.toString(count[i]));
         System.out.println();
     }
+
+    public static void printTree(){
+        for(int i =0; i<N; i++){
+            for(int j =0; j<N; j++){
+                if(trees[i][j]) System.out.print("1 ");
+                else System.out.print("0 ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+
 
     public static int calDist(int x1, int y1, int x2, int y2) {
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);
