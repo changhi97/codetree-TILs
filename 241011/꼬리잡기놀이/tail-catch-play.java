@@ -7,7 +7,7 @@ public class Main {
     static int N, M, K;
     static int[][] board;
     static int[][] user;
-    static int[] dx = {0, 1, 0, -1}, dy = {1, 0, -1, 0};
+    static int[] dx = {0, -1, 0, 1}, dy = {1, 0, -1, 0};
     static List<List<Player>> line;
     static List<Player> prev;
     static List<Node> cmd;
@@ -15,14 +15,14 @@ public class Main {
     static int answer= 0;
 
     public static void main(String[] args) throws IOException {
-//        String input = "7 2 2\n" +
+//        String input = "7 2 10\n" +
 //                "3 2 1 0 0 0 0\n" +
 //                "4 0 4 0 2 1 4\n" +
 //                "4 4 4 0 2 0 4\n" +
 //                "0 0 0 0 3 0 4\n" +
 //                "0 0 4 4 4 0 4\n" +
 //                "0 0 4 0 0 0 4\n" +
-//                "0 0 4 4 4 4 4\n";
+//                "0 0 4 4 4 4 4";
 //        InputStream is = new ByteArrayInputStream(input.getBytes());
 //        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -74,12 +74,15 @@ public class Main {
 
 
         for (int i = 0; i < K; i++) {
+//            System.out.println(i+"================");
             move();
             updateMap();
+//            print();
             Node node = cmd.get(i % cmdLen);
             shootBall(node.x,node.y, node.dir);
 
             updateMap();
+//            print();
         }
         System.out.println(answer);
 
@@ -87,13 +90,16 @@ public class Main {
     }
 
     public static void shootBall(int x, int y, int dir) {
+//        System.out.println("set"+" "+x+" "+y+" "+dir );
         while (true) {
             if (user[x][y] > 0 && user[x][y] < 4) break;
             x += dx[dir];
             y += dy[dir];
 
-            if (x < 0 || y < 0 || x >= N || y >= N) break;
+            if (x < 0 || y < 0 || x >= N || y >= N) return;
         }
+
+//        System.out.println(x+" "+y+" "+user[x][y]);
 
 
         for (List<Player> players : line) {
