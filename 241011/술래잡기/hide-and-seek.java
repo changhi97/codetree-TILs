@@ -1,4 +1,4 @@
-//SWEA_꼬리잡기놀이
+//SWEA_술래 잡기
 
 import java.io.*;
 import java.util.*;
@@ -12,60 +12,9 @@ public class Main {
     static List<Player> rms;
     static Player hero;
 
-    static int[][] temp;
-
     static List<Player> route;
 
-
     public static void main(String[] args) throws IOException {
-//        String input = "5 24 20 82\n" +
-//                "4 5 2\n" +
-//                "2 1 1\n" +
-//                "1 4 2\n" +
-//                "2 5 1\n" +
-//                "1 1 1\n" +
-//                "1 3 1\n" +
-//                "5 3 1\n" +
-//                "3 1 2\n" +
-//                "3 5 2\n" +
-//                "4 4 2\n" +
-//                "4 3 2\n" +
-//                "2 2 2\n" +
-//                "3 2 2\n" +
-//                "1 2 2\n" +
-//                "1 5 1\n" +
-//                "5 1 1\n" +
-//                "4 1 2\n" +
-//                "2 3 2\n" +
-//                "2 4 1\n" +
-//                "5 4 1\n" +
-//                "5 2 2\n" +
-//                "4 2 2\n" +
-//                "3 4 1\n" +
-//                "5 5 1\n" +
-//                "3 2\n" +
-//                "3 5\n" +
-//                "2 2\n" +
-//                "4 2\n" +
-//                "3 3\n" +
-//                "5 4\n" +
-//                "3 4\n" +
-//                "5 5\n" +
-//                "2 4\n" +
-//                "2 3\n" +
-//                "1 1\n" +
-//                "2 5\n" +
-//                "5 1\n" +
-//                "1 2\n" +
-//                "5 3\n" +
-//                "4 4\n" +
-//                "2 1\n" +
-//                "4 5\n" +
-//                "1 4\n" +
-//                "4 3";
-//
-//        InputStream is = new ByteArrayInputStream(input.getBytes());
-//        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
 
@@ -79,16 +28,6 @@ public class Main {
         rms = new ArrayList<>();
         hero = new Player(N / 2, N / 2, 0);
         route = new ArrayList<>();
-
-
-        temp = new int[N][N];
-
-        int idx = 1;
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                temp[i][j] = idx++;
-            }
-        }
 
         //d가 1인 경우 좌우로 움직임을, 2인 경우 상하로만 움직임
         for (int i = 0; i < M; i++) {
@@ -115,16 +54,11 @@ public class Main {
         int now = route.size() / 2;
 
         int answer = 0;
-//        printTree();
-//        printRun();
         for (int i = 0; i < K; i++) {
-//            System.out.println(i+"===============");
             run();
-//            printRun();
             now = (now+1)%route.size();
             answer+= moveHero(now)*(i+1);
 
-//            printRun();
         }
         System.out.println(answer);
 
@@ -208,24 +142,6 @@ public class Main {
         route.add(new Player(nx, ny, (dir + 2) % 4));
 
     }
-
-    public static void printRun(){
-        for(int i =0; i<N; i++) System.out.println(Arrays.toString(count[i]));
-        System.out.println();
-    }
-
-    public static void printTree(){
-        for(int i =0; i<N; i++){
-            for(int j =0; j<N; j++){
-                if(trees[i][j]) System.out.print("1 ");
-                else System.out.print("0 ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
-
 
     public static int calDist(int x1, int y1, int x2, int y2) {
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);
