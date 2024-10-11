@@ -15,16 +15,6 @@ public class Main {
     static int answer= 0;
 
     public static void main(String[] args) throws IOException {
-//        String input = "7 2 10\n" +
-//                "3 2 1 0 0 0 0\n" +
-//                "4 0 4 0 2 1 4\n" +
-//                "4 4 4 0 2 0 4\n" +
-//                "0 0 0 0 3 0 4\n" +
-//                "0 0 4 4 4 0 4\n" +
-//                "0 0 4 0 0 0 4\n" +
-//                "0 0 4 4 4 4 4";
-//        InputStream is = new ByteArrayInputStream(input.getBytes());
-//        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
 
@@ -74,15 +64,12 @@ public class Main {
 
 
         for (int i = 0; i < K; i++) {
-//            System.out.println(i+"================");
             move();
             updateMap();
-//            print();
             Node node = cmd.get(i % cmdLen);
             shootBall(node.x,node.y, node.dir);
 
             updateMap();
-//            print();
         }
         System.out.println(answer);
 
@@ -90,7 +77,6 @@ public class Main {
     }
 
     public static void shootBall(int x, int y, int dir) {
-//        System.out.println("set"+" "+x+" "+y+" "+dir );
         while (true) {
             if (user[x][y] > 0 && user[x][y] < 4) break;
             x += dx[dir];
@@ -98,9 +84,6 @@ public class Main {
 
             if (x < 0 || y < 0 || x >= N || y >= N) return;
         }
-
-//        System.out.println(x+" "+y+" "+user[x][y]);
-
 
         for (List<Player> players : line) {
             for(int i =0; i<players.size(); i++){
@@ -121,7 +104,6 @@ public class Main {
         }
     }
 
-    //움직일떄, board가 4이면서 앞쪽 사람을 만나야 한다.
     public static void move() {
         for (List<Player> players : line) {
 
